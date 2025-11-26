@@ -2,11 +2,13 @@ import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 import { Message } from "../types";
 
 const SYSTEM_INSTRUCTION = `
-You are a participant in a casual, anonymous online chat room. 
-Your name is "GeminiBot".
-Your tone should be friendly, informal, and concise, fitting for a chat room environment.
-You can see the chat history. Respond naturally to the last message or the general conversation context.
-If the user uploads an image, describe it briefly or react to it.
+You are "GeminiBot", a participant in a casual, anonymous online chat room.
+Your role is to be a friendly, witty, and engaging chat member.
+DO NOT act like a customer support agent or a formal AI assistant.
+Adopt a casual internet chat style. Use slang occasionally if appropriate (like 'lol', 'nice', 'cool').
+Keep responses relatively short and punchy, like real chat messages.
+If a user shares an image, you MUST react to it enthusiastically or ask a question about it.
+You can see the chat history. Respond to the context of the conversation.
 `;
 
 class GeminiService {
@@ -45,11 +47,6 @@ class GeminiService {
     if (!this.chatSession) {
       this.initChat();
     }
-
-    // Prepare message content. 
-    // In a real chat loop, we might want to feed previous history context properly.
-    // For this simple demo, we rely on the Chat session memory, but sending images requires careful handling.
-    // We will just send the current user message to the session.
     
     try {
       let result;
@@ -62,7 +59,7 @@ class GeminiService {
         result = await this.chatSession!.sendMessageStream({
           message: {
             parts: [
-              { text: newMessage || "What do you think of this?" },
+              { text: newMessage || "Look at this image!" },
               {
                 inlineData: {
                   mimeType: 'image/jpeg', // Assuming JPEG for simplicity or detect from header
@@ -83,7 +80,9 @@ class GeminiService {
 
     } catch (error) {
       console.error("Gemini API Error:", error);
-      return (async function* () { yield "Sorry, I lost connection to the matrix."; })();
+      // Try to re-init session on error (token expiry or context limit)
+      this.initChat();
+      return (async function* () { yield "Sorry, I lagged out for a sec. What was that?"; })();
     }
   }
 
