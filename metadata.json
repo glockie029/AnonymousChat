@@ -1,0 +1,5 @@
+{
+  "name": "AnonChat & Gemini",
+  "description": "A modern, anonymous chat room interface featuring image uploads, emoji support, and an AI chat participant powered by Gemini. Includes chat history export functionality.",
+  "requestFramePermissions": []
+}
