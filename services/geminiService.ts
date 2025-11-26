@@ -57,17 +57,15 @@ class GeminiService {
         const cleanBase64 = imageBase64.split(',')[1] || imageBase64;
         
         result = await this.chatSession!.sendMessageStream({
-          message: {
-            parts: [
-              { text: newMessage || "Look at this image!" },
-              {
-                inlineData: {
-                  mimeType: 'image/jpeg', // Assuming JPEG for simplicity or detect from header
-                  data: cleanBase64
-                }
+          message: [
+            { text: newMessage || "Look at this image!" },
+            {
+              inlineData: {
+                mimeType: 'image/jpeg', // Assuming JPEG for simplicity or detect from header
+                data: cleanBase64
               }
-            ]
-          }
+            }
+          ]
         });
 
       } else {
